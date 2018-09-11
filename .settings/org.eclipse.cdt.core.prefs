@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+environment/project/0.1289849069/PATH/delimiter=;
+environment/project/0.1289849069/PATH/operation=replace
+environment/project/0.1289849069/PATH/value=C\:\\STM32v2\\eclipse;C\:\\STM32v2\\gnu-arm\\bin;C\:\\STM32v2\\Tools;%TEMP%
+environment/project/0.1289849069/TEMP/delimiter=;
+environment/project/0.1289849069/TEMP/operation=replace
+environment/project/0.1289849069/TEMP/value=c\:\\Tmp
+environment/project/0.1289849069/TMP/delimiter=;
+environment/project/0.1289849069/TMP/operation=replace
+environment/project/0.1289849069/TMP/value=c\:\\Tmp
+environment/project/0.1289849069/append=true
+environment/project/0.1289849069/appendContributed=true
