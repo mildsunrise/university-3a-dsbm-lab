@@ -7,6 +7,7 @@
  *************************************************************/
 
 #include "Base.h"     // Basic definitions
+#include "lcd.h"      // LCD module header file
 
 // Function that blinks the green LED
 
@@ -41,9 +42,25 @@ void ledSequence(void) {
     }
 }
 
+void putNamesOnDisplay(void) {
+    // Initialize the LCD
+    LCD_Init();
+    LCD_Backlight(TRUE);
+    // Write things
+    LCD_ClearDisplay();
+    LCD_SendString("Alba \x02\x02");
+    LCD_GotoXY(0, 1);
+    LCD_SendString("Mendez");
+    // No cursor*/
+    LCD_Config(TRUE, FALSE, FALSE);
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
+
+    // LED test
+    putNamesOnDisplay();
 
     // Call the LED blink function
     // This function never returns

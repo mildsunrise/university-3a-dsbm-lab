@@ -8,6 +8,7 @@
 
 #include "Base.h"  // Basic definitions
 #include "lcd.h"   // LCD definitions
+#include "util.h"
 
 // Some of the function need to be completed
 // as is requested on the manual
@@ -25,18 +26,38 @@
 // and sets the ouptuts to "0"
 
 static void lcdGPIOInit(void) {
-    // This code is requested in P2.4
-
+    GPIO_ModePushPull(LCD_PORT, LCD_BL_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_E_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_RS_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_DB4_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_DB5_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_DB6_PAD);
+    GPIO_ModePushPull(LCD_PORT, LCD_DB7_PAD);
 }
 
 // Send 4 bits to the LCD and generates an enable pulse
 //     nibbleCmd : Bits 3..0 Nibble to send to DB7...DB4
 //     RS        : TRUE (RS="1")   FALSE (RS="0")
 
-static void lcdNibble(int32_t nibbleCmd, int32_t RS) {
-    // This code is requested in P2.6
+static void lcdNibble(uint32_t nibbleCmd, int32_t RS) {
+    // Set RS and DB4..DB7 and sleep 10us
+    LCD_PORT->BSRR.H.set = (nibbleCmd & 0b1111) << LCD_DB4_PAD | (RS ? LCD_RS_BIT : 0);
+    LCD_PORT->BSRR.H.clear = (~nibbleCmd & 0b1111) << LCD_DB4_PAD | (!RS ? LCD_RS_BIT : 0);
+    DELAY_US(10);
+    // Enable E for 10us
+    LCD_PORT->BSRR.H.set = LCD_E_BIT;
+    DELAY_US(10);
+    // Disable E and wait another 10us
+    LCD_PORT->BSRR.H.clear = LCD_E_BIT;
+    DELAY_US(10);
+}
 
+// Send a full 8-bit value to the LCD by first writing the higher nibble
+// and then the lower nibble
 
+static inline void lcdValue(uint32_t cmd, int32_t RS) {
+    lcdNibble((cmd >> 4) & 0xF, RS);
+    lcdNibble(cmd & 0xF, RS);
 }
 
 
@@ -50,15 +71,17 @@ static void lcdNibble(int32_t nibbleCmd, int32_t RS) {
 //     on evaluates to FALSE  Turn off backlight
 
 void LCD_Backlight(int32_t on) {
-    // This code is requested in P2.5
-
+    if (on)
+        LCD_PORT->BSRR.H.set = LCD_BL_BIT;
+    else
+        LCD_PORT->BSRR.H.clear = LCD_BL_BIT;
 }
 
 // Clear the LCD and set the cursor position at 0,0
 
 void LCD_ClearDisplay(void) {
-    // This code is requested in P2.7
-
+    lcdValue(0b00000001, 0);
+    DELAY_US(1520);
 }
 
 // Configures the display
@@ -67,8 +90,8 @@ void LCD_ClearDisplay(void) {
 //     If Blink is TRUE turn on blinking, if not, deactivate blinking
 
 void LCD_Config(int32_t Disp, int32_t Cursor, int32_t Blink) {
-    // This code is requested in P2.7
-
+    lcdValue(0b000001000 | (Disp ? BIT2 : 0) | (Cursor ? BIT1 : 0) | (Blink ? BIT0 : 0), 0);
+    DELAY_US(40);
 }
 
 // Set the cursor at the given position
@@ -76,23 +99,26 @@ void LCD_Config(int32_t Disp, int32_t Cursor, int32_t Blink) {
 //    row: Row     (0..LCD_ROWS-1)
 
 void LCD_GotoXY(int32_t col, int32_t row) {
-    // This code is requested in P2.7
-
+    uint32_t address = ((row == 0) ? 0x00 : 0x40) + ((uint32_t)col);
+    lcdValue(0b10000000 | (address & 0b1111111), 0);
+    DELAY_US(40);
 }
 
 // Send a character to the LCD at the current position
 //     car: Charater to send
 
 void LCD_SendChar(char car) {
-    // This code is requested in P2.7
-
+    lcdValue(car, 1);
+    DELAY_US(40); // FIXME: what time to wait for when writing to data?
 }
 
 // Send a string to the LCD at the current position
 //     string: String to send
 
 void LCD_SendString(char *string) {
-    // This code is requested in P2.7
+    // Send every character except the NUL terminator
+    for (; *string != '\0'; string++)
+        LCD_SendChar(*string);
 
 }
 
