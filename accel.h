@@ -35,6 +35,20 @@ int32_t readAccel(int32_t reg,int32_t sign);
 //                  16 Hexadecimal
 char *itoa(int32_t num, char *str, int32_t radix);
 
+/************ Public constants **************/
+
+// Register constants
+
+#define LIS_R_WHO_AM_I          0x0F
+#define LIS_R_CTRL_REG1         0x20
+#define LIS_R_CTRL_REG2         0x21
+#define LIS_R_CTRL_REG3         0x22
+#define LIS_R_HP_FILTER_RESET   0x23
+#define LIS_R_STATUS_REG        0x27
+#define LIS_R_OUT_X             0x29
+#define LIS_R_OUT_Y             0x2B
+#define LIS_R_OUT_Z             0x2D
+
 #endif // accel.h
 
 

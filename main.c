@@ -8,6 +8,7 @@
 
 #include "Base.h"     // Basic definitions
 #include "lcd.h"      // LCD module header file
+#include "accel.h"    // Accelerometer module header file
 
 // Function that blinks the green LED
 
@@ -43,8 +44,7 @@ void ledSequence(void) {
 }
 
 void putNamesOnDisplay(void) {
-    // Initialize the LCD
-    LCD_Init();
+    // Enable backlight
     LCD_Backlight(TRUE);
     // Define a character
     uint8_t e_acute [] = {
@@ -67,20 +67,40 @@ void putNamesOnDisplay(void) {
     LCD_Config(TRUE, FALSE, FALSE);
 }
 
+void accelWhoAmI(void) {
+    LCD_ClearDisplay();
+
+    // Read register, convert to string
+    int32_t value = readAccel(LIS_R_WHO_AM_I, 0);
+    char valueStr [4];
+    itoa(value, valueStr, 16);
+
+    // Show in display
+    LCD_SendString("Who_Am_I:");
+    LCD_GotoXY(0, 1);
+    LCD_SendString("0x");
+    LCD_SendString(valueStr);
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
+    LCD_Init();
+    initAccel();
 
-    // LED test
-    putNamesOnDisplay();
+    // Basic accelerometer test
+    accelWhoAmI();
 
-    // Call the LED blink function
-    // This function never returns
-    //ledBlink();
+    // LCD test
+    //putNamesOnDisplay();
 
     // Call the LED sequence function
     // This function never returns
     ledSequence();
+
+    // Call the LED blink function
+    // This function never returns
+    //ledBlink();
 
     // Return so that the compiler doesn't complain
     // It is not really needed as ledBlink never returns

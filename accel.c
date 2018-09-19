@@ -8,6 +8,7 @@
 
 #include "Base.h"    // Basic definitions
 #include "accel.h"   // Header file for this module
+#include "util.h"    // Generic utilities
 
 // Some functions need to be implemented as indicated on P3
 
@@ -19,8 +20,29 @@
 // Init the accelerometer SPI bus
 
 void initAccel(void) {
-    // This code is requested in  P3.3 i P3.5
+    // Power on SPI peripheral
+    RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
 
+    // Configure CS pin as push-pull output with '1'
+    GPIO_ModePushPull(LIS_CS_PORT, LIS_CS_PAD);
+    LIS_CS_PORT->BSRR.H.set = LIS_CS_BIT;
+
+    // Configure CR1
+    uint16_t cr1 = SPI1->CR1;
+    // Set CPOL = CPHA = 1
+    cr1 |= SPI_CR1_CPOL | SPI_CR1_CPHA;
+    // Set BR[2:0] to 011 f(CLK)/16, which sets a baudrate of 5.25MHz
+    cr1 = (cr1 & (~SPI_CR1_BR)) | (0b011 * SPI_CR1_BR_0);
+    // Set DFF = 0 (8-bit data)
+    cr1 &= ~SPI_CR1_DFF;
+    // Set SSM = SSI = 1 (manage CS in software)
+    cr1 |= SPI_CR1_SSM | SPI_CR1_SSI;
+    // Set MSTR = 1 (act as a master)
+    cr1 |= SPI_CR1_MSTR;
+    // Set SPE = 1 (enable peripheral)
+    cr1 |= SPI_CR1_SPE;
+    // Write register
+    SPI1->CR1 = cr1;
 }
 
 /********** PUBLIC FUNCTIONS ALREADY IMPLEMENTED ***************
