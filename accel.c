@@ -17,6 +17,19 @@
  be prototypes for them in lcd.h.
  ******************************************************************/
 
+static inline int32_t registerIsReserved(int32_t reg) {
+    return (reg < 0x0F) ||
+           ((reg < 0x20)&&(reg > 0x0F)) ||
+           ((reg < 0x27)&&(reg > 0x23)) ||
+           ((reg < 0x30)&&(reg > 0x2D));
+}
+
+static inline int32_t registerIsReadOnly(int32_t reg) {
+    return (reg == LIS_R_WHO_AM_I) || (reg >= 0x23 && reg <= 0x2D) ||
+           (reg == LIS_R_CLICK_SRC) || (reg == LIS_R_FF_WU_SRC_2) ||
+           (reg == LIS_R_FF_WU_SRC_1);
+}
+
 // Init the accelerometer SPI bus
 
 void initAccel(void) {
@@ -43,6 +56,58 @@ void initAccel(void) {
     cr1 |= SPI_CR1_SPE;
     // Write register
     SPI1->CR1 = cr1;
+
+    // Set PD bit at CTRL_REG1 to 1 Powered
+    int32_t ctrl_reg1 = readAccel(LIS_R_CTRL_REG1, 0);
+    ctrl_reg1 |= BIT6;
+    writeAccel(LIS_R_CTRL_REG1, ctrl_reg1);
+}
+
+// Write an accelerometer register
+//      reg   : Number of the register to write
+//      val   : Value to write, only 8 lower bits will be used
+//
+// In case of error returns numbers greater than 1000, otherwise 0
+//             1001 : Try to access a reserved register
+//             1002 : Try to access a read-only register
+
+int32_t writeAccel(int32_t reg, int32_t val) {
+    // Limit the register number to 6 bits 0..63
+    // Bit 6 = 0 -> autoincrement disabled
+    // Bit 7 = 0 -> write mode
+    reg &= 0x3F;
+
+    // Verify its is not a reserved register
+    if (registerIsReserved(reg)) return 1001;
+    if (registerIsReadOnly(reg)) return 1002;
+
+    // Activates Chip Select
+    LIS_CS_PORT->BSRR.H.clear = LIS_CS_BIT;
+
+    // Send command
+    SPI1->DR = reg;
+
+    // Small delay before reading the buffer
+    DELAY_US(2);
+
+    // Wait to the receiver buffer to fill, and discard value
+    while (!((SPI1->SR) & SPI_SR_RXNE));
+    SPI1->DR;
+
+    // Send the value
+    SPI1->DR = val;
+
+    // Small delay before reading the buffer
+    DELAY_US(2);
+
+    // Wait to the receiver buffer to fill, and discard value
+    while (!((SPI1->SR) & BIT0));
+    SPI1->DR;
+
+    // Deactivates Chip Select
+    LIS_CS_PORT->BSRR.H.set = LIS_CS_BIT;
+
+    return 0;
 }
 
 /********** PUBLIC FUNCTIONS ALREADY IMPLEMENTED ***************
@@ -67,10 +132,7 @@ int32_t readAccel(int32_t reg, int32_t sign) {
 
     // Although it is not mandatory for read,
     // we verify its is not a reserved register
-    if (reg < 0x0F) return 1001;
-    if ((reg < 0x20)&&(reg > 0x0F)) return 1001;
-    if ((reg < 0x27)&&(reg > 0x23)) return 1001;
-    if ((reg < 0x30)&&(reg > 0x2D)) return 1001;
+    if (registerIsReserved(reg)) return 1001;
 
     // Activates Chip Select
     LIS_CS_PORT->BSRR.H.clear = LIS_CS_BIT;

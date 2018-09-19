@@ -82,14 +82,39 @@ void accelWhoAmI(void) {
     LCD_SendString(valueStr);
 }
 
+void accelPollY(void) {
+    LCD_ClearDisplay();
+    LCD_SendString("Y acceleration:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Wait before reading
+        SLEEP_MS(150);
+
+        // Read acceleration and convert to string
+        int32_t yacc = readAccel(LIS_R_OUT_Y, 1);
+        char yaccStr [5];
+        itoa(yacc, yaccStr, 10);
+
+        // Write at display
+        LCD_GotoXY(0, 1);
+        LCD_SendString(yaccStr);
+        LCD_SendString("   ");    // erase any left-over characters
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
     LCD_Init();
     initAccel();
 
+    // Show Y acceleration on LCD
+    // This function never returns
+    accelPollY();
+
     // Basic accelerometer test
-    accelWhoAmI();
+    //accelWhoAmI();
 
     // LCD test
     //putNamesOnDisplay();

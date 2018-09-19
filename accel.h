@@ -25,6 +25,16 @@ void initAccel(void);
 
 int32_t readAccel(int32_t reg,int32_t sign);
 
+// Write an accelerometer register
+//      reg   : Number of the register to write
+//      val   : Value to write, only 8 lower bits will be used
+//
+// In case of error returns numbers greater than 1000, otherwise 0
+//             1001 : Try to access a reserved register
+//             1002 : Try to access a read-only register
+
+int32_t writeAccel(int32_t reg, int32_t val);
+
 // Integer to string conversion in the given radix
 //      num:   Number to convert
 //      str:   Pointer to the string where the result should be located
@@ -48,6 +58,21 @@ char *itoa(int32_t num, char *str, int32_t radix);
 #define LIS_R_OUT_X             0x29
 #define LIS_R_OUT_Y             0x2B
 #define LIS_R_OUT_Z             0x2D
+#define LIS_R_FF_WU_CFG_1       0x30
+#define LIS_R_FF_WU_SRC_1       0x31
+#define LIS_R_FF_WU_THS_1       0x32
+#define LIS_R_FF_WU_DURATION_1  0x33
+#define LIS_R_FF_WU_CFG_2       0x34
+#define LIS_R_FF_WU_SRC_2       0x35
+#define LIS_R_FF_WU_THS_2       0x36
+#define LIS_R_FF_WU_DURATION_2  0x37
+#define LIS_R_CLICK_CFG         0x38
+#define LIS_R_CLICK_SRC         0x39
+#define LIS_R_CLICK_THSY_X      0x3B
+#define LIS_R_CLICK_THSZ        0x3C
+#define LIS_R_CLICK_TIMELIMIT   0x3D
+#define LIS_R_CLICK_LATENCY     0x3E
+#define LIS_R_CLICK_WINDOW      0x3F
 
 #endif // accel.h
 
