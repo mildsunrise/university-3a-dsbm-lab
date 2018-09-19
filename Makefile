@@ -21,6 +21,7 @@
 # between Base.c amd main.c
 # The character "\" at the end of all but the last line is important
 PCSRC = Base.c \
+        lcd.c \
         main.c
 
 # COMPILATION OPTIONS ####################################################
