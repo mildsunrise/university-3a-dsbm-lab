@@ -9,6 +9,7 @@
 #include "Base.h"     // Basic definitions
 #include "lcd.h"      // LCD module header file
 #include "accel.h"    // Accelerometer module header file
+#include "int.h"      // Interrupt test program
 
 // Function that blinks the green LED
 
@@ -189,9 +190,13 @@ int main(void) {
     LCD_Init();
     initAccel();
 
+    // Interrupt test
+    // This function never returns
+    interruptTest();
+
     // Final accelerator program
     // This function never returns
-    accelDrawAxis();
+    //accelDrawAxis();
 
     // Show Y acceleration on LCD
     // This function never returns
