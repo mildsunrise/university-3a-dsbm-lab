@@ -119,7 +119,28 @@ void LCD_SendString(char *string) {
     // Send every character except the NUL terminator
     for (; *string != '\0'; string++)
         LCD_SendChar(*string);
+}
 
+// Write a custom character to the CGRAM, and then goes to (0,0)
+// to prevent corruption of the CGRAM
+//     pos: Character to define (0..7)
+//     data: Buffer of 8 bytes to write
+
+void LCD_CustomChar(int32_t pos, uint8_t *data) {
+    // Move to the corresponding CGRAM address
+    uint32_t address = pos * 8;
+    lcdValue(0b01000000 | (address & 0b111111), 0);
+    DELAY_US(40);
+
+    // Write each byte
+    int32_t offset;
+    for (offset = 0; offset < 8; offset++) {
+        lcdValue(data[offset], 1);
+        DELAY_US(40); // FIXME: what time to wait for when writing to data?
+    }
+
+    // Move back to DDRAM
+    LCD_GotoXY(0, 0);
 }
 
 /********** PUBLIC FUNCTIONS ALREADY IMPLEMENTED ***************

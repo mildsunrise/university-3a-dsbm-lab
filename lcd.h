@@ -51,6 +51,11 @@ void LCD_SendChar(char car);
 //     string: String to send
 void LCD_SendString(char *string);
 
+// Write a custom character to the CGRAM, and then goes to (0,0)
+// to prevent corruption of the CGRAM
+//     pos: Character to define (0..7)
+//     data: Buffer of 8 bytes to write
+void LCD_CustomChar(int32_t pos, uint8_t *data);
 
 #endif //_LCD_H
 

@@ -46,6 +46,18 @@ void putNamesOnDisplay(void) {
     // Initialize the LCD
     LCD_Init();
     LCD_Backlight(TRUE);
+    // Define a character
+    uint8_t e_acute [] = {
+        0b00000000,
+        0b00000001,
+        0b00000111,
+        0b00011111,
+        0b00000111,
+        0b00000001,
+        0b00000000,
+        0b00000000,
+    };
+    LCD_CustomChar(2, e_acute);
     // Write things
     LCD_ClearDisplay();
     LCD_SendString("Alba \x02\x02");
