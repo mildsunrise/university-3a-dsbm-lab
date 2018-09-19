@@ -8,7 +8,7 @@
 
 #include "Base.h"  // Basic definitions
 #include "lcd.h"   // LCD definitions
-#include "util.h"
+#include "util.h"  // Generic utilities
 
 // Some of the function need to be completed
 // as is requested on the manual

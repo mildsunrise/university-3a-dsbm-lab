@@ -9,6 +9,10 @@
 #include "Base.h"  // Basic definitions
 #include "util.h"   // Generic utilities
 
+// Configure a GPIO line as push-pull output, at the lowest speed,
+// and write a low value
+//     port: GPIO port
+//     line: GPIO line to set as output
 void GPIO_ModePushPull(GPIO_TypeDef *port, int32_t line) {
     // MODERy[1:0] -> 01 General purpose output mode
     port->MODER = (port->MODER & ~(0b11 << line * 2)) | (0b01 << line * 2);
