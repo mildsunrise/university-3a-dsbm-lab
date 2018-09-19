@@ -14,23 +14,22 @@
 
 // Configures timer 5 (GPT5)
 static const GPTConfig gpt5cfg = {
-  1000000,    /* 1MHz clock for Timer 5 */
-  NULL,       /* No Callback */
-  0           /* Dier field */
+    1000000,    /* 1MHz clock for Timer 5 */
+    NULL,       /* No Callback */
+    0           /* Dier field */
 };
 
 // This function returns after the time is elapsed
 // Timer granularity is 10us
 // Time is rounded in excess in 10us steps
 //      time: Wait time in microseconds
-void gptDelayUs(uint32_t time)
- {
- uint32_t count;
 
- for(count=0;count<time;count+=10)
-	 gptPolledDelay(&GPTD5,10);
+void gptDelayUs(uint32_t time) {
+    uint32_t count;
 
- }
+    for (count = 0; count < time; count += 10)
+        gptPolledDelay(&GPTD5, 10);
+}
 
 /********************* GPT 9 *********************************/
 
@@ -40,41 +39,40 @@ void gptDelayUs(uint32_t time)
 
 // Configures timer 9 (GPT5)
 static const GPTConfig gpt9cfg = {
-  1000000,    /* 1MHz clock for Timer 9 */
-  NULL,       /* No Callback */
-  0           /* Dier field */
+    1000000,    /* 1MHz clock for Timer 9 */
+    NULL,       /* No Callback */
+    0           /* Dier field */
 };
 
 // This function returns after the time is elapsed
 // Timer granularity is 10us
 // Time is rounded in excess in 10us steps
 //      time: Wait time in microseconds
-void gptDelayUs2(uint32_t time)
- {
- uint32_t count;
 
- for(count=0;count<time;count+=10)
-	 gptPolledDelay(&GPTD9,10);
+void gptDelayUs2(uint32_t time) {
+    uint32_t count;
 
- }
+    for (count = 0; count < time; count += 10)
+        gptPolledDelay(&GPTD9, 10);
+}
 
 /************** Initialization ****************************/
 
 // General initialization
-void baseInit(void)
- {
- // HAL initialization
- halInit();
 
- // RTOS Kernel initialization
- chSysInit();
+void baseInit(void) {
+    // HAL initialization
+    halInit();
 
- // GPT 5 timer initialization
- gptStart(&GPTD5, &gpt5cfg);
+    // RTOS Kernel initialization
+    chSysInit();
 
- // GPT 9 timer initialization
- gptStart(&GPTD9, &gpt9cfg);
- }
+    // GPT 5 timer initialization
+    gptStart(&GPTD5, &gpt5cfg);
+
+    // GPT 9 timer initialization
+    gptStart(&GPTD9, &gpt9cfg);
+}
 
 
 

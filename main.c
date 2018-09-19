@@ -9,35 +9,33 @@
 #include "Base.h"     // Basic definitions
 
 // Function that blinks the green LED
-void ledBlink(void)
- {
- while(1)
-   {
-   // Turn on the green LED using the BSRR register
-   (LEDS_PORT->BSRR.H.set)=BIT(GREEN_LED_PAD);
 
-   // Wait 200ms
-   SLEEP_MS(200);
+void ledBlink(void) {
+    while (1) {
+        // Turn on the green LED using the BSRR register
+        (LEDS_PORT->BSRR.H.set) = BIT(GREEN_LED_PAD);
 
-   // Turn off the green LED using the BSRR register
-   (LEDS_PORT->BSRR.H.clear)=BIT(GREEN_LED_PAD);
+        // Wait 200ms
+        SLEEP_MS(200);
 
-   // Wait 200ms
-   SLEEP_MS(200);
-   }
- }
+        // Turn off the green LED using the BSRR register
+        (LEDS_PORT->BSRR.H.clear) = BIT(GREEN_LED_PAD);
 
-int main(void)
- {
- // Basic initializations
- baseInit();
+        // Wait 200ms
+        SLEEP_MS(200);
+    }
+}
 
- // Call the LED blink function
- // This function never returns
- ledBlink();
+int main(void) {
+    // Basic initializations
+    baseInit();
 
- // Return so that the compiler doesn't complain
- // It is not really needed as ledBlink never returns
- return 0;
- }
+    // Call the LED blink function
+    // This function never returns
+    ledBlink();
+
+    // Return so that the compiler doesn't complain
+    // It is not really needed as ledBlink never returns
+    return 0;
+}
 
