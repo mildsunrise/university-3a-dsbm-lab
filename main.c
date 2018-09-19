@@ -103,15 +103,99 @@ void accelPollY(void) {
     }
 }
 
+// Acceleration value which maps to the first/last column in the LCD
+#define DRAW_AXIS_SCALE 42
+// Time to wait between refreshes
+#define DRAW_AXIS_REFRESH 60
+// Number of readings to average
+#define DRAW_AXIS_AVG 6
+
+inline int32_t clampColumn(int32_t col) {
+    if (col < 0) return 0;
+    if (col > 15) return 15;
+    return col;
+}
+
+void accelDrawAxis(void) {
+    // Initialize averaging buffers
+    int32_t xacc_cache [DRAW_AXIS_AVG];
+    int32_t yacc_cache [DRAW_AXIS_AVG];
+    int32_t fill = 0, offset = 0;
+
+    // Prepare LCD
+    uint8_t bullet [] = {
+        0b00000100,
+        0b00000100,
+        0b00001110,
+        0b00011111,
+        0b00011111,
+        0b00001110,
+        0b00000100,
+        0b00000100,
+    };
+    LCD_ClearDisplay();
+    LCD_Config(TRUE, FALSE, FALSE);
+    LCD_Backlight(TRUE);
+    LCD_CustomChar(2, bullet);
+
+    // Read initial acceleration values
+    int32_t xacc_0 = readAccel(LIS_R_OUT_X, 1);
+    int32_t yacc_0 = readAccel(LIS_R_OUT_Y, 1);
+
+    // Start the main loop
+    while (1) {
+        // Wait before reading
+        SLEEP_MS(DRAW_AXIS_REFRESH);
+
+        // Read acceleration on both axis, subtracted from initial
+        int32_t xacc = readAccel(LIS_R_OUT_X, 1) - xacc_0;
+        int32_t yacc = readAccel(LIS_R_OUT_Y, 1) - yacc_0;
+
+        // Insert on buffers
+        xacc_cache[offset] = xacc;
+        yacc_cache[offset] = yacc;
+        if (fill < DRAW_AXIS_AVG) fill++;
+
+        // Get average value
+        int32_t xacc_o = 0, yacc_o = 0, i;
+        for (i = 0; i < fill; i++) {
+            // FIXME: multiply by window function instead of plain average
+            xacc_o += xacc_cache[(DRAW_AXIS_AVG + offset - i) % DRAW_AXIS_AVG];
+            yacc_o += yacc_cache[(DRAW_AXIS_AVG + offset - i) % DRAW_AXIS_AVG];
+        }
+        xacc_o /= fill;
+        yacc_o /= fill;
+
+        // Move buffer slot
+        offset = (offset + 1) % DRAW_AXIS_AVG;
+
+        // Map acceleration to columns, and clamp
+        // Formula: col = clamp(round(((acc_o / DRAW_AXIS_SCALE) + 1) / 2 * 15))
+        int32_t xcol = clampColumn((xacc_o + DRAW_AXIS_SCALE) * 15 / (DRAW_AXIS_SCALE * 2));
+        int32_t ycol = clampColumn((yacc_o + DRAW_AXIS_SCALE) * 15 / (DRAW_AXIS_SCALE * 2));
+
+        // (Re)draw screen
+        LCD_ClearDisplay();
+        LCD_GotoXY(xcol, 0);
+        LCD_SendChar(2);
+        LCD_GotoXY(ycol, 1);
+        LCD_SendChar(2);
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
     LCD_Init();
     initAccel();
 
+    // Final accelerator program
+    // This function never returns
+    accelDrawAxis();
+
     // Show Y acceleration on LCD
     // This function never returns
-    accelPollY();
+    //accelPollY();
 
     // Basic accelerometer test
     //accelWhoAmI();
