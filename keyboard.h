@@ -12,6 +12,13 @@
 // Initialize the keyboard GPIO pins and resources
 void initKeyboard(void);
 
+// Initialize the interrupts for key detection,
+// must be called after initKeyboard()
+void initConfigKeyboard(void);
+
+// Global variable where last detected key is saved
+extern volatile int32_t detectedKey;
+
 // Explore the keyboard looking for a single key, and return its keycode
 // or KEY_NOT_FOUND if no pressed key was detected
 int32_t readKeyboard(void);

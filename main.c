@@ -233,6 +233,29 @@ void keyboardMultiPoll(void) {
     }
 }
 
+void keyboardPollInterrupt(void) {
+    // Initialize interrupts and stuff
+    initConfigKeyboard();
+
+    // Initialize LCD
+    LCD_ClearDisplay();
+    LCD_SendString("Pressed key:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    // Main loop
+    while (1) {
+        // Wait before reading
+        SLEEP_MS(100);
+
+        // Read current key code
+        int32_t key = detectedKey;
+
+        // Write key char to LCD, or clear if no key
+        LCD_GotoXY(0, 1);
+        LCD_SendChar((key == KEY_NOT_FOUND) ? ' ' : KEY_CHARS[key]);
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
@@ -240,9 +263,13 @@ int main(void) {
     initAccel();
     initKeyboard();
 
+    // Keyboard single-key test *with interrupt detection*
+    // This function never returns
+    keyboardPollInterrupt();
+
     // Keyboard multiple-key test
     // This function never returns
-    keyboardMultiPoll();
+    //keyboardMultiPoll();
 
     // Keyboard single-key test
     // This function never returns

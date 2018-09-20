@@ -25,6 +25,53 @@ void initKeyboard(void) {
     GPIO_ModeInput(KEY_PORT, KEY_COL4_PAD, 1);
 }
 
+volatile int32_t detectedKey = KEY_NOT_FOUND;
+
+// Initialize the interrupts for key detection,
+// must be called after initKeyboard()
+void initConfigKeyboard(void) {
+    // Put all the rows in 0 (drain) state
+    KEY_PORT->BSRR.H.clear = 0b1111 << KEY_ROW1_PAD;
+
+    // Enable SYSCFG clock and configure EXTI9..EXTI6 on the column pins
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+    SYSCFG->EXTICR[1] = (SYSCFG->EXTICR[1] & (~SYSCFG_EXTICR2_EXTI6)) | SYSCFG_EXTICR2_EXTI6_PD;
+    SYSCFG->EXTICR[1] = (SYSCFG->EXTICR[1] & (~SYSCFG_EXTICR2_EXTI7)) | SYSCFG_EXTICR2_EXTI7_PD;
+    SYSCFG->EXTICR[2] = (SYSCFG->EXTICR[2] & (~SYSCFG_EXTICR3_EXTI8)) | SYSCFG_EXTICR3_EXTI8_PD;
+    SYSCFG->EXTICR[2] = (SYSCFG->EXTICR[2] & (~SYSCFG_EXTICR3_EXTI9)) | SYSCFG_EXTICR3_EXTI9_PD;
+
+    // Configure falling trigger interrupts for EXTI9..EXTI6, clear pending bits
+    EXTI->IMR |= EXTI_IMR_MR6 | EXTI_IMR_MR7 | EXTI_IMR_MR8 | EXTI_IMR_MR9;
+    EXTI->RTSR &= ~(EXTI_RTSR_TR6 | EXTI_RTSR_TR7 | EXTI_RTSR_TR8 | EXTI_RTSR_TR9);
+    EXTI->FTSR |= EXTI_FTSR_TR6 | EXTI_FTSR_TR7 | EXTI_FTSR_TR8 | EXTI_FTSR_TR9;
+    EXTI->PR = EXTI_PR_PR6 | EXTI_PR_PR7 | EXTI_PR_PR8 | EXTI_PR_PR9;
+
+    // Enable interrupt vector
+    nvicEnableVector(EXTI9_5_IRQn, CORTEX_PRIORITY_MASK(STM32_EXT_EXTI5_9_IRQ_PRIORITY));
+}
+
+// EXTI10..5 RSI associated to key presses
+CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
+    CH_IRQ_PROLOGUE();
+
+    LEDS_PORT->ODR ^= GREEN_LED_BIT;
+
+    // Disable interrupts and put all rows as open
+    EXTI->IMR &= ~(EXTI_IMR_MR6 | EXTI_IMR_MR7 | EXTI_IMR_MR8 | EXTI_IMR_MR9);
+    KEY_PORT->BSRR.H.set = 0b1111 << KEY_ROW1_PAD;
+
+    // Explore the keyboard and set detected key
+    int32_t key = readKeyboard();
+    if (key != KEY_NOT_FOUND) detectedKey = key;
+
+    // Return rows to drain, erase pending interrupt and enable interrupts again
+    KEY_PORT->BSRR.H.clear = 0b1111 << KEY_ROW1_PAD;
+    EXTI->PR = EXTI_PR_PR6 | EXTI_PR_PR7 | EXTI_PR_PR8 | EXTI_PR_PR9;
+    EXTI->IMR |= EXTI_IMR_MR6 | EXTI_IMR_MR7 | EXTI_IMR_MR8 | EXTI_IMR_MR9;
+
+    CH_IRQ_EPILOGUE();
+}
+
 // Explore the keyboard looking for a single key, and return its keycode
 // or KEY_NOT_FOUND if no pressed key was detected
 int32_t readKeyboard(void) {
