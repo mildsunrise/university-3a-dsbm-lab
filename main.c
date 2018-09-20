@@ -203,6 +203,36 @@ void keyboardPoll(void) {
     }
 }
 
+void keyboardMultiPoll(void) {
+    LCD_ClearDisplay();
+    LCD_SendString("Pressed keys:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Wait before reading
+        SLEEP_MS(100);
+
+        // Read current keys
+        int32_t keys = readMultikey();
+
+        // Clear bottom row
+        LCD_GotoXY(0, 1);
+        LCD_SendString("            ");
+
+        // Write each pressed key to LCD
+        LCD_GotoXY(0, 1);
+        int32_t key;
+        for (key = 0; key < 16; key++) {
+            if ((keys & BIT(key)) != 0)
+                LCD_SendChar(KEY_CHARS[key]);
+        }
+
+        // Write error state to LCD
+        LCD_GotoXY(16 - 4, 1);
+        LCD_SendString(verifyPresses(keys) ? "     " : " ERR!");
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
@@ -210,9 +240,13 @@ int main(void) {
     initAccel();
     initKeyboard();
 
+    // Keyboard multiple-key test
+    // This function never returns
+    keyboardMultiPoll();
+
     // Keyboard single-key test
     // This function never returns
-    keyboardPoll();
+    //keyboardPoll();
 
     // Interrupt test
     // This function never returns

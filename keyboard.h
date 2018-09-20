@@ -16,6 +16,16 @@ void initKeyboard(void);
 // or KEY_NOT_FOUND if no pressed key was detected
 int32_t readKeyboard(void);
 
+// Explore the full keyboard looking for any pressed keys, and return
+// a 16-bit mask with bits corresponding to pressed key codes set to 1.
+// Careful! Some key combinations can lead to false presses, use
+// verifyPresses() to make sure no false presses are present.
+int32_t readMultikey(void);
+
+// Given a pressed key mask, as returned by readMultikey(), verify
+// that no incompatible key combination was found (return TRUE in that case).
+int32_t verifyPresses(int32_t keys);
+
 // CONSTANTS
 
 #define KEY_NOT_FOUND 32
