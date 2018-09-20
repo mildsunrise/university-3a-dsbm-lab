@@ -10,6 +10,7 @@
 #include "lcd.h"      // LCD module header file
 #include "accel.h"    // Accelerometer module header file
 #include "int.h"      // Interrupt test program
+#include "keyboard.h" // 4x4 keyboard module header file
 
 // Function that blinks the green LED
 
@@ -184,15 +185,38 @@ void accelDrawAxis(void) {
     }
 }
 
+void keyboardPoll(void) {
+    LCD_ClearDisplay();
+    LCD_SendString("Pressed key:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Wait before reading
+        SLEEP_MS(100);
+
+        // Read current key code
+        int32_t key = readKeyboard();
+
+        // Write key char to LCD, or clear if no key
+        LCD_GotoXY(0, 1);
+        LCD_SendChar((key == KEY_NOT_FOUND) ? ' ' : KEY_CHARS[key]);
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
     LCD_Init();
     initAccel();
+    initKeyboard();
+
+    // Keyboard single-key test
+    // This function never returns
+    keyboardPoll();
 
     // Interrupt test
     // This function never returns
-    interruptTest();
+    //interruptTest();
 
     // Final accelerator program
     // This function never returns
