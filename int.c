@@ -37,11 +37,12 @@ void interruptTest(void) {
     RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 
     // Set EXTI0 to pin PA0
-    SYSCFG->EXTICR[0] = (SYSCFG->EXTICR[0] & (SYSCFG_EXTICR1_EXTI0)) | SYSCFG_EXTICR1_EXTI0_PA;
+    SYSCFG->EXTICR[0] = (SYSCFG->EXTICR[0] & (~SYSCFG_EXTICR1_EXTI0)) | SYSCFG_EXTICR1_EXTI0_PA;
 
     // Enable EXTI0 on rising edges (IMR0 = RSTR0 = 1), clear pending request bit
     EXTI->IMR |= EXTI_IMR_MR0;
     EXTI->RTSR |= EXTI_RTSR_TR0;
+    EXTI->FTSR &= ~EXTI_FTSR_TR0;
     EXTI->PR = EXTI_PR_PR0;
 
     // Enable interrupt vector
