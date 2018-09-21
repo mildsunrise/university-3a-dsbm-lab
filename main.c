@@ -30,6 +30,8 @@ void ledBlink(void) {
     }
 }
 
+// P1.8
+
 #define TURN_ON(bits) (LEDS_PORT->BSRR.H.set) = (bits);
 #define TURN_OFF(bits) (LEDS_PORT->BSRR.H.clear) = (bits);
 
@@ -45,17 +47,23 @@ void ledSequence(void) {
     }
 }
 
+// P2.5
+
 void backlightToggle(void) {
     LCD_Backlight(1);   // Turn on LCD backlight
     SLEEP_MS(2000);     // Wait 2s
     LCD_Backlight(0);   // Turn off LCD backlight
 }
 
+// P2.6
+
 void lcdJustInit(void) {
     // Just (re)initialize the LCD and do nothing
     LCD_Init();
     while (1);
 }
+
+// P2.7
 
 void lcdHello(void) {
     // Just (re)initialize the LCD and print "Hello"
@@ -86,7 +94,11 @@ void putNamesOnDisplay(void) {
     LCD_SendString("Mendez");
     // No cursor*/
     LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1);
 }
+
+// P3.4
 
 void accelWhoAmI(void) {
     LCD_ClearDisplay();
@@ -101,7 +113,11 @@ void accelWhoAmI(void) {
     LCD_GotoXY(0, 1);
     LCD_SendString("0x");
     LCD_SendString(valueStr);
+
+    while (1);
 }
+
+// P3.5
 
 void accelPollY(void) {
     LCD_ClearDisplay();
@@ -123,6 +139,8 @@ void accelPollY(void) {
         LCD_SendString("   ");    // erase any left-over characters
     }
 }
+
+// P3.6
 
 // Acceleration value which maps to the first/last column in the LCD
 #define DRAW_AXIS_SCALE 42
@@ -204,6 +222,8 @@ void accelDrawAxis(void) {
     }
 }
 
+// C1.2
+
 void keyboardPoll(void) {
     LCD_ClearDisplay();
     LCD_SendString("Pressed key:");
@@ -252,6 +272,8 @@ void keyboardMultiPoll(void) {
     }
 }
 
+// C1.3
+
 void keyboardPollInterrupt(void) {
     // Initialize interrupts and stuff
     initConfigKeyboard();
@@ -274,6 +296,8 @@ void keyboardPollInterrupt(void) {
         LCD_SendChar((key == KEY_NOT_FOUND) ? ' ' : KEY_CHARS[key]);
     }
 }
+
+
 
 int main(void) {
     // Basic initializations
@@ -317,7 +341,7 @@ int main(void) {
 
     // Call the LED sequence function
     // This function never returns
-    ledSequence();
+    //ledSequence();
 
     // Call the LED blink function
     // This function never returns
