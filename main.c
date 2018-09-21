@@ -45,6 +45,25 @@ void ledSequence(void) {
     }
 }
 
+void backlightToggle(void) {
+    LCD_Backlight(1);   // Turn on LCD backlight
+    SLEEP_MS(2000);     // Wait 2s
+    LCD_Backlight(0);   // Turn off LCD backlight
+}
+
+void lcdJustInit(void) {
+    // Just (re)initialize the LCD and do nothing
+    LCD_Init();
+    while (1);
+}
+
+void lcdHello(void) {
+    // Just (re)initialize the LCD and print "Hello"
+    LCD_Init();
+    LCD_SendString("Hello");
+    while (1);
+}
+
 void putNamesOnDisplay(void) {
     // Enable backlight
     LCD_Backlight(TRUE);
@@ -290,7 +309,10 @@ int main(void) {
     // Basic accelerometer test
     //accelWhoAmI();
 
-    // LCD test
+    // LCD tests
+    //backlightToggle();
+    //lcdJustInit();
+    //lcdHello();
     //putNamesOnDisplay();
 
     // Call the LED sequence function
