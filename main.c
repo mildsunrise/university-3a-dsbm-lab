@@ -12,6 +12,7 @@
 #include "accel.h"    // Accelerometer module header file
 #include "int.h"      // Interrupt test program
 #include "keyboard.h" // 4x4 keyboard module header file
+#include "encoder.h"  // Quadrature encoder module header file
 
 // Function that blinks the green LED
 
@@ -298,6 +299,54 @@ void keyboardPollInterrupt(void) {
     }
 }
 
+// C3.3
+
+void encoderPoll(void) {
+    int32_t pos;
+
+    // Initialize LCD
+    uint8_t bullet [] = {
+        0b00000100,
+        0b00000100,
+        0b00001110,
+        0b00011111,
+        0b00011111,
+        0b00001110,
+        0b00000100,
+        0b00000100,
+    };
+    LCD_CustomChar(2, bullet);
+    LCD_ClearDisplay();
+    LCD_SendString("Encoder:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    // Main loop
+    while (1) {
+        // Read encoder count, convert to string
+        // We cast to int16_t to ensure smaller bounds (-32768 to 32767)
+        int32_t count = (int16_t) encoderCount;
+        char countStr [7];
+        itoa(count, countStr, 10);
+
+        // Update screen
+        LCD_GotoXY(9, 0);
+        LCD_SendString(countStr);
+        for (pos = strlen(countStr); pos < 6; pos++)
+            LCD_SendChar(' '); // fill rest of screen with spaces
+
+        // Print indicator
+        LCD_GotoXY(count & 0xF, 1);
+        LCD_SendChar(2);
+
+        // Sleep before reading again
+        SLEEP_MS(100);
+
+        // Erase indicator
+        LCD_GotoXY(count & 0xF, 1);
+        LCD_SendChar(' ');
+    }
+}
+
 
 
 int main(void) {
@@ -306,6 +355,11 @@ int main(void) {
     LCD_Init();
     initAccel();
     initKeyboard();
+    initEncoder();
+
+    // Encoder test
+    // This function never returns
+    encoderPoll();
 
     // Keyboard single-key test *with interrupt detection*
     // This function never returns

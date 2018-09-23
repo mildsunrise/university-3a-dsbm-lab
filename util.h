@@ -40,4 +40,11 @@ void GPIO_ModeInput(GPIO_TypeDef *port, int32_t line, int32_t pullUpDown);
 //                  16 Hexadecimal
 char *itoa(int32_t num, char *str, int32_t radix);
 
+// Return length of string, excluding NUL terminator
+static inline int32_t strlen(const char *str) {
+    int32_t len = 0;
+    while (str[len] != '\0') len++;
+    return len;
+}
+
 #endif //_UTIL_H
