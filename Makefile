@@ -25,6 +25,7 @@ PCSRC = Base.c \
         accel.c \
         int.c \
         keyboard.c \
+        encoder.c \
         util.c \
         main.c
 
