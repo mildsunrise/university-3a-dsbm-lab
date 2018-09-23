@@ -50,11 +50,9 @@ void initConfigKeyboard(void) {
     nvicEnableVector(EXTI9_5_IRQn, CORTEX_PRIORITY_MASK(STM32_EXT_EXTI5_9_IRQ_PRIORITY));
 }
 
-// EXTI10..5 RSI associated to key presses
+// EXTI9..5 RSI associated to key presses
 CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
     CH_IRQ_PROLOGUE();
-
-    LEDS_PORT->ODR ^= GREEN_LED_BIT;
 
     // Disable interrupts and put all rows as open
     EXTI->IMR &= ~(EXTI_IMR_MR6 | EXTI_IMR_MR7 | EXTI_IMR_MR8 | EXTI_IMR_MR9);

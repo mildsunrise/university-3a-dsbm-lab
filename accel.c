@@ -1,6 +1,6 @@
 /**************************************************************
 
- a c c e l . h
+ a c c e l . c
 
  Accelerometer module source file
 
@@ -11,6 +11,8 @@
 #include "util.h"    // Generic utilities
 
 // Some functions need to be implemented as indicated on P3
+
+// FIXME: non atomic operations
 
 /********** PUBLIC FUNCTIONS TO IMPLEMENT ************************
  Those functions will be used outside of lcd.c so there will
@@ -77,7 +79,7 @@ int32_t writeAccel(int32_t reg, int32_t val) {
     // Bit 7 = 0 -> write mode
     reg &= 0x3F;
 
-    // Verify its is not a reserved register
+    // Verify it is not a reserved register
     if (registerIsReserved(reg)) return 1001;
     if (registerIsReadOnly(reg)) return 1002;
 
@@ -131,7 +133,7 @@ int32_t readAccel(int32_t reg, int32_t sign) {
     reg &= 0x3F;
 
     // Although it is not mandatory for read,
-    // we verify its is not a reserved register
+    // we verify it is not a reserved register
     if (registerIsReserved(reg)) return 1001;
 
     // Activates Chip Select

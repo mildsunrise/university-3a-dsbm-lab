@@ -99,7 +99,12 @@ void LCD_Config(int32_t Disp, int32_t Cursor, int32_t Blink) {
 //    row: Row     (0..LCD_ROWS-1)
 
 void LCD_GotoXY(int32_t col, int32_t row) {
-    uint32_t address = ((row == 0) ? 0x00 : 0x40) + ((uint32_t)col);
+    // Restrict coordinates for safety
+    if (row < 0 || row >= 2) row = 0;
+    if (col < 0 || col >= 40) col = 0;
+
+    // Send command and wait
+    uint32_t address = row * 0x40 + col;
     lcdValue(0b10000000 | (address & 0b1111111), 0);
     DELAY_US(40);
 }
