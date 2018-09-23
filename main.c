@@ -7,6 +7,7 @@
  *************************************************************/
 
 #include "Base.h"     // Basic definitions
+#include "util.h"     // Generic utilities
 #include "lcd.h"      // LCD module header file
 #include "accel.h"    // Accelerometer module header file
 #include "int.h"      // Interrupt test program

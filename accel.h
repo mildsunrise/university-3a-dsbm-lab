@@ -35,16 +35,6 @@ int32_t readAccel(int32_t reg,int32_t sign);
 
 int32_t writeAccel(int32_t reg, int32_t val);
 
-// Integer to string conversion in the given radix
-//      num:   Number to convert
-//      str:   Pointer to the string where the result should be located
-//               the user should reserve the needed space fo the string.
-//      radix: Radix to use. Typically it will be:
-//                  2  Binary
-//                  10 Decimal
-//                  16 Hexadecimal
-char *itoa(int32_t num, char *str, int32_t radix);
-
 /************ Public constants **************/
 
 // Register constants
