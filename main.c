@@ -438,53 +438,8 @@ int main(void) {
     initKeyboard();
     initEncoder();
 
-    // Encoder test
-    // This function never returns
-    encoderPoll();
-
-    // Keyboard single-key test *with interrupt detection*
-    // This function never returns
-    keyboardPollInterrupt();
-
-    // Keyboard multiple-key test
-    // This function never returns
-    //keyboardMultiPoll();
-
-    // Keyboard single-key test
-    // This function never returns
-    //keyboardPoll();
-
-    // Interrupt test
-    // This function never returns
-    //interruptTest();
-
-    // Final accelerator program
-    // This function never returns
-    //accelDrawAxis();
-
-    // Show Y acceleration on LCD
-    // This function never returns
-    //accelPollY();
-
-    // Basic accelerometer test
-    //accelWhoAmI();
-
-    // LCD tests
-    //backlightToggle();
-    //lcdJustInit();
-    //lcdHello();
-    //putNamesOnDisplay();
-
-    // Call the LED sequence function
-    // This function never returns
-    //ledSequence();
-
-    // Call the LED blink function
-    // This function never returns
-    //ledBlink();
-
-    // Return so that the compiler doesn't complain
-    // It is not really needed as ledBlink never returns
+    // Start selector
+    programSelector();
     return 0;
 }
 
