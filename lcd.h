@@ -49,7 +49,7 @@ void LCD_SendChar(char car);
 
 // Send a string to the LCD at the current position
 //     string: String to send
-void LCD_SendString(char *string);
+void LCD_SendString(const char *string);
 
 // Write a custom character to the CGRAM, and then goes to (0,0)
 // to prevent corruption of the CGRAM

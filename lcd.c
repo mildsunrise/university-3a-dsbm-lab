@@ -120,7 +120,7 @@ void LCD_SendChar(char car) {
 // Send a string to the LCD at the current position
 //     string: String to send
 
-void LCD_SendString(char *string) {
+void LCD_SendString(const char *string) {
     // Send every character except the NUL terminator
     for (; *string != '\0'; string++)
         LCD_SendChar(*string);
