@@ -349,6 +349,87 @@ void encoderPoll(void) {
 
 
 
+typedef struct {
+    const char *text;
+    void (*program)(void);
+} MenuEntry;
+
+MenuEntry menuEntries [] = {
+    { "P1.8 LED Seq. ", ledSequence },
+    { "P2.5 Backlight", backlightToggle },
+    { "P2.6 LCD Init ", lcdJustInit },
+    { "P2.7 LCD Hello", lcdHello },
+    { "P2.7 LCD Names", putNamesOnDisplay },
+    { "P3.4 Who_Am_I ", accelWhoAmI },
+    { "P3.5 Accel Y  ", accelPollY },
+    { "P3.6 Accel Dot", accelDrawAxis },
+    { "P4.2 Interrupt", interruptTest },
+    { "C1.2 Show key ", keyboardPoll },
+    { "C1.2 Multi key", keyboardMultiPoll },
+    { "C1.3 Intr. key", keyboardPollInterrupt },
+    { "C3.3 Encoder  ", encoderPoll },
+};
+#define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
+
+void programSelector(void) {
+    int32_t shift = 0, selection = 0, lastShift = -1, markerRow = -1;
+    int32_t lastEncoder = encoderCount;
+
+    // Initialize LCD
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Draw screen
+        // -----------
+
+        if (shift != lastShift) {
+            // Redraw text labels
+            int32_t row;
+            for (row = 0; row < LCD_ROWS; row++) {
+                LCD_GotoXY(1, row);
+                LCD_SendString(menuEntries[shift + row].text);
+            }
+            lastShift = shift;
+        }
+
+        if (markerRow != selection - shift) {
+            // Erase old selection marker
+            if (markerRow != -1) {
+                LCD_GotoXY(0, markerRow);
+                LCD_SendChar(' ');
+            }
+            // Draw marker in new position
+            markerRow = selection - shift;
+            LCD_GotoXY(0, markerRow);
+            LCD_SendChar('>');
+        }
+
+        // Sleep and update state
+        // ----------------------
+
+        SLEEP_MS(50);
+
+        // If user button is pressed, execute selected program
+        if ((BUTTON_PORT->IDR & BUTTON_BIT) != 0) {
+            menuEntries[selection].program();
+            while (1); // infinite loop, just in case the program returns
+        }
+
+        // Read encoder increment
+        int32_t encoderIncrement = encoderCount - lastEncoder;
+        lastEncoder += encoderIncrement;
+
+        // Apply increment to selection, keeping it within valid bounds
+        selection += encoderIncrement;
+        if (selection < 0) selection = 0;
+        if (selection >= MENU_ENTRIES_COUNT) selection = MENU_ENTRIES_COUNT - 1;
+
+        // Scroll entries as needed to keep selection visible
+        if (selection < shift) shift = selection;
+        if (selection > (shift + LCD_ROWS - 1)) shift = selection - (LCD_ROWS - 1);
+    }
+}
+
 int main(void) {
     // Basic initializations
     baseInit();
