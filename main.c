@@ -410,6 +410,8 @@ void programSelector(void) {
         SLEEP_MS(50);
 
         // If user button is pressed, execute selected program
+        // (this would be better more reliable with interrupts,
+        // but setting an RSI would conflict with interruptTest)
         if ((BUTTON_PORT->IDR & BUTTON_BIT) != 0) {
             menuEntries[selection].program();
             while (1); // infinite loop, just in case the program returns
