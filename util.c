@@ -135,3 +135,52 @@ char *itoa(int32_t num, char *str, int32_t radix) {
 
     return str;
 }
+
+char *itoa_fix(int32_t num, char *str, int32_t radix, int32_t fixed) {
+    int32_t sign = 0;   // To remember the sign if negative
+    int32_t pos = 0;    // String position
+    int32_t i;          // Generic use variable
+
+    //Save sign
+    if (num < 0) {
+        sign = 1;
+        num = -num;
+    }
+
+    //Construct a backward string of the number.
+    do {
+        i = num % radix;
+        if (i < 10)
+            str[pos] = i + '0';
+        else
+            str[pos] = i - 10 + 'A';
+        pos++;
+        num /= radix;
+
+        if (fixed > 0 && pos == fixed) {
+            str[pos] = '.';
+            pos++;
+        }
+    }    while (num > 0 || pos <= fixed);
+
+    //Now add the sign
+    if (sign)
+        str[pos] = '-';
+    else
+        pos--;
+
+    // Add the final null
+    str[pos + 1] = 0;
+
+    // Pos is now the position of the final digit (before null)
+
+    // Now reverse the string
+    i = 0;
+    do {
+        sign = str[i];
+        str[i++] = str[pos];
+        str[pos--] = sign;
+    } while (i < pos);
+
+    return str;
+}

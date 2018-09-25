@@ -40,6 +40,17 @@ void GPIO_ModeInput(GPIO_TypeDef *port, int32_t line, int32_t pullUpDown);
 //                  16 Hexadecimal
 char *itoa(int32_t num, char *str, int32_t radix);
 
+// Fixed point number to string conversion in the given radix
+//      num:   Number to convert
+//      str:   Pointer to the string where the result should be located
+//               the user should reserve the needed space fo the string.
+//      radix: Radix to use. Typically it will be:
+//                  2  Binary
+//                  10 Decimal
+//                  16 Hexadecimal
+//      fixed: Amount of digits to show after the dot
+char *itoa_fix(int32_t num, char *str, int32_t radix, int32_t fixed);
+
 // Return length of string, excluding NUL terminator
 static inline int32_t strlen(const char *str) {
     int32_t len = 0;

@@ -23,6 +23,11 @@ void initADC(void) {
     // Program sample time for IN8
     ADC1->SMPR2 = (ADC1->SMPR2 & (~ADC_SMPR2_SMP8)) | ADC_SMPR2_SMP_AN8(ADC_SAMPLE_15);
 
+    // Enable VREFINT and temperature sensor
+    ADC->CCR |= ADC_CCR_TSVREFE;
+    // Program sample time for IN16 (T) and IN17 (VREFINT) to ensure > 10us
+    ADC1->SMPR1 = (ADC1->SMPR1 & (~ADC_SMPR1_SMP16)) | ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_480);
+
     // Power up ADC1
     ADC1->CR2 |= ADC_CR2_ADON;
 }
@@ -43,10 +48,19 @@ int32_t readChannel(int32_t channel) {
     return ADC1->DR | ADC_DR_DATA;
 }
 
+// Temperature sensor values from datasheet
+#define TS_AVG_SLOPE     25 // mV increment every 10ºC
+#define TS_V25          760 // mV at 25ºC
+
 // Read the internal temperature sensor; returned
 // value is in tenths of Celsius degrees
 int32_t readT(void) {
-    
+    // Read the temperature sensor
+    int32_t vsense = readChannel(ADC_CHANNEL_SENSOR);
+
+    // Calculate $T = 250 + \frac{\frac{\text{vsense}}{4095} \, V_{dd} - V_{25}}{\text{TS_AVG_SLOPE} / 100}$
+    // Which results in $T = 250 + 100 \frac{\text{vsense} V_{dd} - 4095 \, V_{25}}{\text{4095 \, TS_AVG_SLOPE}}$
+    return 250 + (100 * (vsense * 3000 - 4095 * TS_V25)) / (4095 * TS_AVG_SLOPE);
 }
 
 // Using the ADC voltage reference, return Vdd voltage

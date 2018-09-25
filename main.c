@@ -323,6 +323,40 @@ void potentiometerPoll(void) {
     }
 }
 
+// C2.5
+
+void temperaturePoll(void) {
+    uint8_t degree [] = {
+        0b00000110,
+        0b00001001,
+        0b00001001,
+        0b00001001,
+        0b00000110,
+        0b00000000,
+        0b00000000,
+        0b00000000,
+    };
+    LCD_CustomChar(2, degree);
+    LCD_ClearDisplay();
+    LCD_SendString("Temperature:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Read temperature and convert to string
+        int32_t t = readT();
+        char tStr [8];
+        itoa_fix(t, tStr, 10, 1);
+
+        // Write at display
+        LCD_GotoXY(0, 1);
+        LCD_SendString(tStr);
+        LCD_SendString(" \x02""C  ");
+
+        // Wait before next refresh
+        SLEEP_MS(200);
+    }
+}
+
 // C3.3
 
 void encoderPoll(void) {
@@ -392,6 +426,7 @@ MenuEntry menuEntries [] = {
     { "C1.2 Multi key", keyboardMultiPoll },
     { "C1.3 Intr. key", keyboardPollInterrupt },
     { "C2.4 Pot show ", potentiometerPoll },
+    { "C2.5 Temp show", temperaturePoll },
     { "C3.3 Encoder  ", encoderPoll },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
