@@ -13,6 +13,7 @@
 #include "int.h"      // Interrupt test program
 #include "keyboard.h" // 4x4 keyboard module header file
 #include "encoder.h"  // Quadrature encoder module header file
+#include "analog.h"   // ADC module header file
 
 // Function that blinks the green LED
 
@@ -299,6 +300,29 @@ void keyboardPollInterrupt(void) {
     }
 }
 
+// C2.4
+
+void potentiometerPoll(void) {
+    LCD_ClearDisplay();
+    LCD_SendString("Potentiometer:");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Read acceleration and convert to string
+        int32_t pot = readChannel(ADC_CHANNEL_POT);
+        char potStr [5];
+        itoa(pot, potStr, 10);
+
+        // Write at display
+        LCD_GotoXY(0, 1);
+        LCD_SendString(potStr);
+        LCD_SendString("   ");    // erase any left-over characters
+
+        // Wait before next refresh
+        SLEEP_MS(150);
+    }
+}
+
 // C3.3
 
 void encoderPoll(void) {
@@ -367,6 +391,7 @@ MenuEntry menuEntries [] = {
     { "C1.2 Show key ", keyboardPoll },
     { "C1.2 Multi key", keyboardMultiPoll },
     { "C1.3 Intr. key", keyboardPollInterrupt },
+    { "C2.4 Pot show ", potentiometerPoll },
     { "C3.3 Encoder  ", encoderPoll },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
@@ -439,6 +464,7 @@ int main(void) {
     initAccel();
     initKeyboard();
     initEncoder();
+    initADC();
 
     // Start selector
     programSelector();

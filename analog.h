@@ -26,4 +26,8 @@ int32_t readT(void);
 // in millivolts
 int32_t readVdd(void);
 
+/************ Public constants **************/
+
+#define ADC_CHANNEL_POT (ADC_CHANNEL_IN8)
+
 #endif // _ANALOG_H
