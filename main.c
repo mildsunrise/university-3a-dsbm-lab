@@ -416,14 +416,14 @@ void encoderPoll(void) {
             LCD_SendChar(' '); // fill rest of screen with spaces
 
         // Print indicator
-        LCD_GotoXY(count & 0xF, 1);
+        LCD_GotoXY((count + 8) & 0xF, 1);
         LCD_SendChar(2);
 
         // Sleep before reading again
         SLEEP_MS(100);
 
         // Erase indicator
-        LCD_GotoXY(count & 0xF, 1);
+        LCD_GotoXY((count + 8) & 0xF, 1);
         LCD_SendChar(' ');
     }
 }
@@ -497,6 +497,7 @@ void programSelector(void) {
         // (this would be better more reliable with interrupts,
         // but setting an RSI would conflict with interruptTest)
         if ((BUTTON_PORT->IDR & BUTTON_BIT) != 0) {
+            LCD_ClearDisplay();
             menuEntries[selection].program();
             while (1); // infinite loop, just in case the program returns
         }
