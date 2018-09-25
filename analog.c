@@ -46,7 +46,7 @@ int32_t readChannel(int32_t channel) {
     while ((ADC1->SR | ADC_SR_EOC) == 0);
 
     // Read converted value
-    return ADC1->DR | ADC_DR_DATA;
+    return ADC1->DR & ADC_DR_DATA;
 }
 
 // Temperature sensor values from datasheet

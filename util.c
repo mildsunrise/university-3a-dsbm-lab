@@ -12,7 +12,7 @@
 // FIXME: non atomic operations
 
 #define SET_BITS(value, offset, nbits, bits) \
-    value = (value & ~((BIT(nbits)-1) << offset)) | (bits << offset);
+    value = ((value) & ~((BIT(nbits)-1) << (offset))) | ((bits) << (offset));
 
 // Configure a GPIO line as push-pull output, at the lowest speed,
 // and write a low value
