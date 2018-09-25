@@ -27,6 +27,7 @@ void initADC(void) {
     ADC->CCR |= ADC_CCR_TSVREFE;
     // Program sample time for IN16 (T) and IN17 (VREFINT) to ensure > 10us
     ADC1->SMPR1 = (ADC1->SMPR1 & (~ADC_SMPR1_SMP16)) | ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_480);
+    ADC1->SMPR1 = (ADC1->SMPR1 & (~ADC_SMPR1_SMP17)) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_480);
 
     // Power up ADC1
     ADC1->CR2 |= ADC_CR2_ADON;
@@ -55,16 +56,27 @@ int32_t readChannel(int32_t channel) {
 // Read the internal temperature sensor; returned
 // value is in tenths of Celsius degrees
 int32_t readT(void) {
-    // Read the temperature sensor
+    // Read the temperature sensor and Vdd
     int32_t vsense = readChannel(ADC_CHANNEL_SENSOR);
+    int32_t vdd = readVdd();
 
     // Calculate $T = 250 + \frac{\frac{\text{vsense}}{4095} \, V_{dd} - V_{25}}{\text{TS_AVG_SLOPE} / 100}$
     // Which results in $T = 250 + 100 \frac{\text{vsense} V_{dd} - 4095 \, V_{25}}{\text{4095 \, TS_AVG_SLOPE}}$
-    return 250 + (100 * (vsense * 3000 - 4095 * TS_V25)) / (4095 * TS_AVG_SLOPE);
+    return 250 + (100 * (vsense * vdd - 4095 * TS_V25)) / (4095 * TS_AVG_SLOPE);
 }
+
+// Voltage reference values from datasheet [mV]
+#define VREFINT_MIN 1180
+#define VREFINT_TYP 1210
+#define VREFINT_MAX 1240
 
 // Using the ADC voltage reference, return Vdd voltage
 // in millivolts
 int32_t readVdd(void) {
-    
+    // Read the voltage reference
+    int32_t vrefint = readChannel(ADC_CHANNEL_VREFINT);
+
+    // Calculate Vdd knowing $\text{vrefint} = 4095 \, \frac{V_{REFINT}}{V_{DD}}$
+    // Thus, $V_{DD} = 4095 \, \frac{V_{REFINT}}{\text{vrefint}}$
+    return (4095 * VREFINT_TYP) / vrefint;
 }

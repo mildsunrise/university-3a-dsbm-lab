@@ -357,6 +357,29 @@ void temperaturePoll(void) {
     }
 }
 
+// C2.6
+
+void vddPoll(void) {
+    LCD_ClearDisplay();
+    LCD_SendString("Vdd =");
+    LCD_Config(TRUE, FALSE, FALSE);
+
+    while (1) {
+        // Read temperature and convert to string
+        int32_t vdd = readVdd();
+        char vddStr [8];
+        itoa_fix(vdd, vddStr, 10, 3);
+
+        // Write at display
+        LCD_GotoXY(6, 0);
+        LCD_SendString(vddStr);
+        LCD_SendString(" V");
+
+        // Wait before next refresh
+        SLEEP_MS(200);
+    }
+}
+
 // C3.3
 
 void encoderPoll(void) {
@@ -427,6 +450,7 @@ MenuEntry menuEntries [] = {
     { "C1.3 Intr. key", keyboardPollInterrupt },
     { "C2.4 Pot show ", potentiometerPoll },
     { "C2.5 Temp show", temperaturePoll },
+    { "C2.6 Vdd show ", vddPoll },
     { "C3.3 Encoder  ", encoderPoll },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
