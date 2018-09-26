@@ -90,6 +90,9 @@ void semaphoreTwoThreads(void) {
 
 /************************ MUTEX EXAMPLE *******************************/
 
+// Mutex protecting LCD access
+static Mutex mutex;
+
 // Working area for the child thread
 static WORKING_AREA(waThEM, 128);
 
@@ -113,6 +116,9 @@ void mutexExample(void) {
     LCD_ClearDisplay();
     LCD_Backlight(0);
 
+    // Initialize the mutex
+    chMtxInit(&mutex);
+
     // Creates a child thread
     chThdCreateStatic(waThEM, sizeof (waThEM), NORMALPRIO, thMtx, NULL);
 
@@ -123,8 +129,10 @@ void mutexExample(void) {
     while (1) {
         for (i = 0; i < 20; i++)    // 20 times for each digit
             for (x = 0; x < LCD_COLUMNS; x++) { // For each column on the LCD...
+                chMtxLock(&mutex);      // LOCK the LCD mutex
                 LCD_GotoXY(x, 0);       // Jump to that column
                 LCD_SendChar(car);      // Write the digit
+                chMtxUnlock();          // UNLOCK the LCD mutex
                 DELAY_US(17000);        // Some delay
             }
         if (++car > '9') car = '0'; // Go to next digit
@@ -144,8 +152,10 @@ static msg_t thMtx(void *arg) {
     while (1) {
         for (i = 0; i < 20; i++)    // 20 times for each char
             for (x = 0; x < LCD_COLUMNS; x++) { // For each LCD column
+                chMtxLock(&mutex);      // LOCK the LCD mutex
                 LCD_GotoXY(x, 1);       // Jump to that column
                 LCD_SendChar(car);      // Write the char
+                chMtxUnlock();          // UNLOCK the LCD mutex
                 DELAY_US2(10000);       // Some delay
             }
         if (++car > 'Z') car = 'A'; // Go to next char

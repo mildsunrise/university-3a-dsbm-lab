@@ -500,6 +500,7 @@ MenuEntry menuEntries [] = {
     { "R1.3 4Thd     ", fourThreadsTest },
     { "R2.2 Sem      ", semaphoreExample },
     { "R2.2 Sem 2Thd ", semaphoreTwoThreads },
+    { "R2.4 Mutex LCD", mutexExample },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
 
