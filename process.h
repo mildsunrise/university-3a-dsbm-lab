@@ -14,6 +14,11 @@
 void test2threads(void);
 void busyWait(uint32_t n);
 
+void test2threadsPlus1(void);
+void test2threadsMinus1(void);
+
+void test2threadsSleep(void);
+
 #endif /* process.h */
 
 

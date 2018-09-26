@@ -14,6 +14,7 @@
 #include "keyboard.h" // 4x4 keyboard module header file
 #include "encoder.h"  // Quadrature encoder module header file
 #include "analog.h"   // ADC module header file
+#include "process.h"  // Introduction to processes header file
 
 // Function that blinks the green LED
 
@@ -428,6 +429,45 @@ void encoderPoll(void) {
     }
 }
 
+// R1.3
+
+// Input parameters struct for the thread function
+typedef struct { uint32_t bits; int32_t sleepTime; } FourThreadsChildParams;
+
+// Thread function
+static msg_t fourThreadsChild(void *arg) {
+    FourThreadsChildParams *params = (FourThreadsChildParams*) arg;
+    while (1) {
+        LEDS_PORT->BSRR.H.set = params->bits;
+        SLEEP_MS(params->sleepTime);
+        LEDS_PORT->BSRR.H.clear = params->bits;
+        SLEEP_MS(params->sleepTime);
+    }
+    return 0;
+}
+
+// Main program
+void fourThreadsTest(void) {
+    // Allocate working space for each child thread
+    static struct { WORKING_AREA(wa, 128); } children [3];
+
+    // Define parameters for each thread
+    FourThreadsChildParams params [] = {
+        { BLUE_LED_BIT, 300 },
+        { ORANGE_LED_BIT, 500 },
+        { GREEN_LED_BIT, 400 },
+        { RED_LED_BIT, 700 },
+    };
+
+    // Start child threads
+    int32_t i;
+    for (i = 0; i < 3; i++)
+        chThdCreateStatic(children[i].wa, sizeof(children[i].wa), NORMALPRIO, fourThreadsChild, &params[i+1]);
+
+    // Start main thread's routine
+    fourThreadsChild(&params[0]);
+}
+
 
 
 typedef struct {
@@ -452,6 +492,11 @@ MenuEntry menuEntries [] = {
     { "C2.5 Temp show", temperaturePoll },
     { "C2.6 Vdd show ", vddPoll },
     { "C3.3 Encoder  ", encoderPoll },
+    { "R1.3 2Thd     ", test2threads },
+    { "R1.3 2Thd +1  ", test2threadsPlus1 },
+    { "R1.3 2Thd -1  ", test2threadsMinus1 },
+    { "R1.3 2ThdSleep", test2threadsSleep },
+    { "R1.3 4Thd     ", fourThreadsTest },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
 

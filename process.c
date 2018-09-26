@@ -81,3 +81,90 @@ void busyWait(uint32_t n) {
 
 /************ TWO THREAD SIMPLE EXAMPLE ENDS *******************/
 
+// Variation of test2threads that starts process with NORMALPRIO+1
+void test2threadsPlus1(void) {
+    // Basic system initialization
+    baseInit();
+
+    // Child thread creation
+    chThdCreateStatic(waChild, sizeof (waChild), NORMALPRIO+1, thChild, NULL);
+
+    while (TRUE) {
+        // Turn on blue LED using BSRR
+        (LEDS_PORT->BSRR.H.set) = BLUE_LED_BIT;
+
+        // Pause
+        busyWait(3);
+
+        // Turn off blue LED using BSRR
+        (LEDS_PORT->BSRR.H.clear) = BLUE_LED_BIT;
+
+        // Pausa
+        busyWait(3);
+    }
+}
+
+// Variation of test2threads that starts process with NORMALPRIO-1
+void test2threadsMinus1(void) {
+    // Basic system initialization
+    baseInit();
+
+    // Child thread creation
+    chThdCreateStatic(waChild, sizeof (waChild), NORMALPRIO-1, thChild, NULL);
+
+    while (TRUE) {
+        // Turn on blue LED using BSRR
+        (LEDS_PORT->BSRR.H.set) = BLUE_LED_BIT;
+
+        // Pause
+        busyWait(3);
+
+        // Turn off blue LED using BSRR
+        (LEDS_PORT->BSRR.H.clear) = BLUE_LED_BIT;
+
+        // Pausa
+        busyWait(3);
+    }
+}
+
+/* Variation of test2threadsPlus1 that uses SLEEP instead of busyWait */
+
+static msg_t thChildSleep(void *arg) {
+    while (TRUE) {
+        // Turn on orange LED using BSRR
+        (LEDS_PORT->BSRR.H.set) = ORANGE_LED_BIT;
+
+        // Pausa
+        SLEEP_MS(500);
+
+        // Turn off orange LED using BSRR
+        (LEDS_PORT->BSRR.H.clear) = ORANGE_LED_BIT;
+
+        // Pausa
+        SLEEP_MS(500);
+    }
+    return 0;
+}
+
+void test2threadsSleep(void) {
+    // Basic system initialization
+    baseInit();
+
+    // Child thread creation
+    chThdCreateStatic(waChild, sizeof (waChild), NORMALPRIO+1, thChildSleep, NULL);
+
+    while (TRUE) {
+        // Turn on blue LED using BSRR
+        (LEDS_PORT->BSRR.H.set) = BLUE_LED_BIT;
+
+        // Pause
+        SLEEP_MS(300);
+
+        // Turn off blue LED using BSRR
+        (LEDS_PORT->BSRR.H.clear) = BLUE_LED_BIT;
+
+        // Pausa
+        SLEEP_MS(300);
+    }
+}
+
