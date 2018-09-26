@@ -27,6 +27,8 @@ PCSRC = Base.c \
         keyboard.c \
         analog.c \
         encoder.c \
+        process.c \
+        mutexes.c \
         util.c \
         main.c
 
