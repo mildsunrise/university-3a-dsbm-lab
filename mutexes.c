@@ -12,11 +12,12 @@
 
 /******************* SEMAPHORE EXAMPLE ********************/
 
-// Binary semaphore
-BinarySemaphore semaf;
+// Binary semaphores
+BinarySemaphore semaf, semaf2;
 
-// Working area for the semaphore child thread
+// Working area for the semaphore child threads
 static WORKING_AREA(waSem, 128);
+static WORKING_AREA(waSem2, 128);
 
 // Child thread function prototype
 static msg_t thSem(void *arg);
@@ -27,8 +28,9 @@ void semaphoreExample(void) {
     // Global initialization
     baseInit();
 
-    // Initializes the semaphore as not taken
+    // Initializes the semaphores as not taken
     chBSemInit(&semaf, FALSE);
+    chBSemInit(&semaf2, FALSE);
 
     // Creates a child thread
     chThdCreateStatic(waSem, sizeof (waSem), NORMALPRIO + 1, thSem, NULL);
@@ -44,12 +46,46 @@ void semaphoreExample(void) {
 // at each semaphore syncronization
 
 static msg_t thSem(void *arg) {
+    uint32_t counter = 0;
     while (1) {
         chBSemWait(&semaf);                 // Wait for syncronization
         (LEDS_PORT->ODR) ^= ORANGE_LED_BIT; // Toggle LED
+
+        counter++;
+        if ((counter % 2) == 0)             // Every two ticks
+            chBSemSignal(&semaf2);          // Send signal to other child
     }
 
     return 0;
+}
+
+// Variation of the original thSem but controlling the blue LED
+// and synchronized on the second semaphore
+
+static msg_t thSem2(void *arg) {
+    while (1) {
+        chBSemWait(&semaf2);                // Wait for synchronization
+        (LEDS_PORT->ODR) ^= BLUE_LED_BIT;   // Toggle LED
+    }
+
+    return 0;
+}
+
+// Second process synchronization example using two child threads
+
+void semaphoreTwoThreads(void) {
+    // Initializes the semaphores as not taken
+    chBSemInit(&semaf, FALSE);
+    chBSemInit(&semaf2, FALSE);
+
+    // Creates a child thread
+    chThdCreateStatic(waSem, sizeof (waSem), NORMALPRIO + 1, thSem, NULL);
+    chThdCreateStatic(waSem2, sizeof (waSem2), NORMALPRIO + 1, thSem2, NULL);
+
+    while (1) {
+        SLEEP_MS(300);          // Wait 300ms
+        chBSemSignal(&semaf);   // Send signal to child
+    }
 }
 
 /************************ MUTEX EXAMPLE *******************************/

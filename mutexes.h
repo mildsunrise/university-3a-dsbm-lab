@@ -11,6 +11,7 @@
 
 // Semaphore function prototypes
 void semaphoreExample(void);
+void semaphoreTwoThreads(void);
 
 // Mutexes function prototypes
 void mutexExample(void);

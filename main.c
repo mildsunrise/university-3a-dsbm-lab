@@ -15,6 +15,7 @@
 #include "encoder.h"  // Quadrature encoder module header file
 #include "analog.h"   // ADC module header file
 #include "process.h"  // Introduction to processes header file
+#include "mutexes.h"  // Introduction to semaphores and mutexes header file
 
 // Function that blinks the green LED
 
@@ -497,6 +498,8 @@ MenuEntry menuEntries [] = {
     { "R1.3 2Thd -1  ", test2threadsMinus1 },
     { "R1.3 2ThdSleep", test2threadsSleep },
     { "R1.3 4Thd     ", fourThreadsTest },
+    { "R2.2 Sem      ", semaphoreExample },
+    { "R2.2 Sem 2Thd ", semaphoreTwoThreads },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
 
