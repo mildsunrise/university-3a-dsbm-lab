@@ -43,7 +43,7 @@ int32_t readChannel(int32_t channel) {
     ADC1->CR2 |= ADC_CR2_SWSTART;
 
     // Wait for conversion to end
-    while ((ADC1->SR | ADC_SR_EOC) == 0);
+    while ((ADC1->SR & ADC_SR_EOC) == 0);
 
     // Read converted value
     return ADC1->DR & ADC_DR_DATA;
