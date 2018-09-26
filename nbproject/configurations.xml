@@ -186,6 +186,9 @@
     </logicalFolder>
     <df root="." name="0">
       <in>Base.c</in>
+      <in>accel.c</in>
+      <in>int.c</in>
+      <in>keyboard.c</in>
       <in>lcd.c</in>
       <in>main.c</in>
       <in>util.c</in>
@@ -214,6 +217,8 @@
         <element flagsID="0" commonFlags="-ggdb -fsingle-precision-constant"/>
       </flagsDictionary>
       <codeAssistance>
+        <buildAnalyzer>false</buildAnalyzer>
+        <includeAdditional>true</includeAdditional>
       </codeAssistance>
       <makefileType>
         <makeTool>
@@ -644,6 +649,18 @@
         </cTool>
       </item>
       <item path="Base.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="accel.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="int.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
+      </item>
+      <item path="keyboard.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
         </cTool>
       </item>

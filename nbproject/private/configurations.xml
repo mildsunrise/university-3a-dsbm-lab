@@ -14,13 +14,27 @@
       </df>
       <in>Base.c</in>
       <in>Base.h</in>
+      <in>accel.c</in>
+      <in>accel.h</in>
+      <in>analog.c</in>
+      <in>analog.h</in>
       <in>chconf.h</in>
+      <in>encoder.c</in>
+      <in>encoder.h</in>
       <in>halconf.h</in>
+      <in>int.c</in>
+      <in>int.h</in>
+      <in>keyboard.c</in>
+      <in>keyboard.h</in>
       <in>labBoard12.h</in>
       <in>lcd.c</in>
       <in>lcd.h</in>
       <in>main.c</in>
       <in>mcuconf.h</in>
+      <in>mutexes.c</in>
+      <in>mutexes.h</in>
+      <in>process.c</in>
+      <in>process.h</in>
       <in>util.c</in>
       <in>util.h</in>
     </df>
