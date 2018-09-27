@@ -118,6 +118,7 @@ void accelWhoAmI(void) {
     LCD_GotoXY(0, 1);
     LCD_SendString("0x");
     LCD_SendString(valueStr);
+    LCD_SendString((value == 0x3B) ? " LIS302DL" : " LIS3DSH");
 
     while (1);
 }
