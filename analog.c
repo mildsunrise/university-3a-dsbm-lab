@@ -12,7 +12,7 @@
 // Initialize the ADC peripheral and GPIO pins
 void initADC(void) {
     // Enable clock on ADC1
-    RCC->APB2ENR = RCC_APB2ENR_ADC1EN;
+    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 
     // Program ADC clock prescaler as fc(APB2) / 4 = 21MHz
     ADC->CCR = (ADC->CCR & (~ADC_CCR_ADCPRE)) | ADC_CCR_ADCPRE_DIV4;
