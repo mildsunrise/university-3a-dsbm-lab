@@ -9,8 +9,6 @@
 #include "Base.h"  // Basic definitions
 #include "util.h"   // Generic utilities
 
-// FIXME: non atomic operations
-
 #define SET_BITS(value, offset, nbits, bits) \
     value = ((value) & ~((BIT(nbits)-1) << (offset))) | ((bits) << (offset));
 

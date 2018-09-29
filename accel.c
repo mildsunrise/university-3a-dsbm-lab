@@ -12,8 +12,6 @@
 
 // Some functions need to be implemented as indicated on P3
 
-// FIXME: non atomic operations
-
 /********** PUBLIC FUNCTIONS TO IMPLEMENT ************************
  Those functions will be used outside of lcd.c so there will
  be prototypes for them in lcd.h.

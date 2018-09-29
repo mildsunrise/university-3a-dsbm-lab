@@ -114,7 +114,7 @@ void LCD_GotoXY(int32_t col, int32_t row) {
 
 void LCD_SendChar(char car) {
     lcdValue(car, 1);
-    DELAY_US(40); // FIXME: what time to wait for when writing to data?
+    DELAY_US(40);
 }
 
 // Send a string to the LCD at the current position
@@ -141,7 +141,7 @@ void LCD_CustomChar(int32_t pos, uint8_t *data) {
     int32_t offset;
     for (offset = 0; offset < 8; offset++) {
         lcdValue(data[offset], 1);
-        DELAY_US(40); // FIXME: what time to wait for when writing to data?
+        DELAY_US(40);
     }
 
     // Move back to DDRAM
