@@ -510,6 +510,7 @@ void programSelector(void) {
     int32_t lastEncoder = encoderCount;
 
     // Initialize LCD
+    LCD_ClearDisplay();
     LCD_Config(TRUE, FALSE, FALSE);
 
     while (1) {
@@ -520,7 +521,7 @@ void programSelector(void) {
             // Redraw text labels
             int32_t row;
             for (row = 0; row < LCD_ROWS; row++) {
-                LCD_GotoXY(1, row);
+                LCD_GotoXY(2, row);
                 LCD_SendString(menuEntries[shift + row].text);
             }
             lastShift = shift;
