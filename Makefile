@@ -30,6 +30,7 @@ PCSRC = Base.c \
         process.c \
         mutexes.c \
         util.c \
+        baseconvert.c \
         main.c
 
 # COMPILATION OPTIONS ####################################################

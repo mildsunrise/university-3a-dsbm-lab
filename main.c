@@ -17,6 +17,8 @@
 #include "process.h"  // Introduction to processes header file
 #include "mutexes.h"  // Introduction to semaphores and mutexes header file
 
+#include "baseconvert.h" // Custom program: Base converter
+
 // Function that blinks the green LED
 
 void ledBlink(void) {
@@ -502,6 +504,7 @@ MenuEntry menuEntries [] = {
     { "R2.2 Sem      ", semaphoreExample },
     { "R2.2 Sem 2Thd ", semaphoreTwoThreads },
     { "R2.4 Mutex LCD", mutexExample },
+    { "Base converter", baseConverter },
 };
 #define MENU_ENTRIES_COUNT ((int32_t)(sizeof(menuEntries) / sizeof(MenuEntry)))
 
