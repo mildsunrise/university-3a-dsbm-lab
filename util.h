@@ -58,4 +58,13 @@ static inline int32_t strlen(const char *str) {
     return len;
 }
 
+// String to integer conversion in the given radix
+// Expects an option '-' or '+' sign, then a series of 0-9A-Z.
+//      str:  String to convert
+//      radix: Radix to use. Typically it will be:
+//                  2  Binary
+//                  10 Decimal
+//                  16 Hexadecimal
+int32_t atoi(const char *str, int32_t radix);
+
 #endif //_UTIL_H

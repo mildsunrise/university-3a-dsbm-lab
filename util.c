@@ -136,6 +136,24 @@ char *itoa(int32_t num, char *str, int32_t radix) {
     return str;
 }
 
+int32_t atoi(const char *str, int32_t radix) {
+    int k = 0, sign = 1;
+    if (*str == '-' || *str == '+') {
+        sign = (*str == '-') ? -1 : +1;
+        str++;
+    }
+    for (; *str != '\0'; str++) {
+        k *= radix;
+        if (*str >= '0' && *str <= '9')
+            k += *str - '0';
+        else if (*str >= 'A' && *str <= 'Z')
+            k += *str - 'A' + 10;
+        else if (*str >= 'a' && *str <= 'z')
+            k += *str - 'a' + 10;
+    }
+    return k * sign;
+}
+
 char *itoa_fix(int32_t num, char *str, int32_t radix, int32_t fixed) {
     int32_t sign = 0;   // To remember the sign if negative
     int32_t pos = 0;    // String position

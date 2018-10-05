@@ -545,7 +545,7 @@ void programSelector(void) {
         SLEEP_MS(50);
 
         // If user button is pressed, execute selected program
-        // (this would be better more reliable with interrupts,
+        // (this would be more reliable with interrupts,
         // but setting an RSI would conflict with interruptTest)
         if ((BUTTON_PORT->IDR & BUTTON_BIT) != 0) {
             LCD_ClearDisplay();
