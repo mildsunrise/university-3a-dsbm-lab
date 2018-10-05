@@ -131,7 +131,7 @@ void LCD_SendString(const char *string) {
 //     pos: Character to define (0..7)
 //     data: Buffer of 8 bytes to write
 
-void LCD_CustomChar(int32_t pos, uint8_t *data) {
+void LCD_CustomChar(int32_t pos, const uint8_t *data) {
     // Move to the corresponding CGRAM address
     uint32_t address = pos * 8;
     lcdValue(0b01000000 | (address & 0b111111), 0);

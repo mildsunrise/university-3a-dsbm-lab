@@ -13,7 +13,7 @@
     value = ((value) & ~((BIT(nbits)-1) << (offset))) | ((bits) << (offset));
 
 // Configure a GPIO line as push-pull output, at the lowest speed,
-// and write a low value
+// and starting with a low value
 //     port: GPIO port
 //     line: GPIO line to set as output
 void GPIO_ModePushPull(GPIO_TypeDef *port, int32_t line) {
