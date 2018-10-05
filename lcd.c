@@ -181,8 +181,8 @@ void LCD_Init(void) {
     lcdNibble(0x02, 0);
 
     // Mode 4 bits 2 lines 5x8 chars
-    lcdNibble(0x08, 0);
     lcdNibble(0x02, 0);
+    lcdNibble(0x08, 0);
     DELAY_US(50);
 
     // Display on blink on and cursor on

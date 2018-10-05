@@ -19,9 +19,6 @@
 void GPIO_ModePushPull(GPIO_TypeDef *port, int32_t line) {
     line &= 0xF;
 
-    // MODERy[1:0] -> 01 General purpose output mode
-    SET_BITS(port->MODER, 2*line, 2, 0b01);
-
     // OTy -> 0 Push-pull output
     SET_BITS(port->OTYPER, line, 1, 0);
 
@@ -33,6 +30,10 @@ void GPIO_ModePushPull(GPIO_TypeDef *port, int32_t line) {
 
     // ODRy -> 0 Low
     SET_BITS(port->ODR, line, 1, 0);
+
+    // After everything is set up, switch mode
+    // MODERy[1:0] -> 01 General purpose output mode
+    SET_BITS(port->MODER, 2*line, 2, 0b01);
 }
 
 // Configure a GPIO line as open drain output, at the lowest speed,
@@ -41,9 +42,6 @@ void GPIO_ModePushPull(GPIO_TypeDef *port, int32_t line) {
 //     line: GPIO line to set as output
 void GPIO_ModeOpenDrain(GPIO_TypeDef *port, int32_t line) {
     line &= 0xF;
-
-    // MODERy[1:0] -> 01 General purpose output mode
-    SET_BITS(port->MODER, 2*line, 2, 0b01);
 
     // OTy -> 1 Open drain output
     SET_BITS(port->OTYPER, line, 1, 1);
@@ -56,6 +54,10 @@ void GPIO_ModeOpenDrain(GPIO_TypeDef *port, int32_t line) {
 
     // ODRy -> 1 Open
     SET_BITS(port->ODR, line, 1, 1);
+
+    // After everything is set up, switch mode
+    // MODERy[1:0] -> 01 General purpose output mode
+    SET_BITS(port->MODER, 2*line, 2, 0b01);
 }
 
 // Configure a GPIO line as input
